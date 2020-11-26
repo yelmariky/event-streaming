@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  
+  labels:
+    app: account-web
+    version: v1
+  name: account-web
+ 
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: account-web
+      version: v1
+  template:
+    metadata:
+     
+      labels:
+        app: account-web
+        version: v1
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+    spec:
+      containers:
+      - name: account-web
+        image: account-web:latest
+        imagePullPolicy: Never
+        ports:
+          - name: http
+            containerPort: 9987 # The port that the container exposes
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "500Mi"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: docker
+---
+apiVersion: v1
+kind: Service
+metadata:
+  
+  labels:
+    app: account-web
+  name: account-web
+  
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 9987
+  selector:
+    app: account-web
+  type: ClusterIP

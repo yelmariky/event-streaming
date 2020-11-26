@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  
+  labels:
+    app: warehouse-worker
+  name: warehouse-worker
+ 
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: warehouse-worker
+  
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+      labels:
+        app: warehouse-worker
+    spec:
+      containers:
+      - name: warehouse-worker
+        image: warehouse-worker:latest
+        imagePullPolicy: Never
+        env:
+         - name: SPRING_PROFILES_ACTIVE
+           value: docker
+        ports:
+          - name: http
+            containerPort: 8865 # The port that the container exposes
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "500Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  
+  labels:
+    app: warehouse-worker
+  name: warehouse-worker
+  
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8865
+  selector:
+    app: warehouse-worker
+  type: ClusterIP

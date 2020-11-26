@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  
+  labels:
+    app: payment-worker
+  name: payment-worker
+ 
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: payment-worker
+  
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+      labels:
+        app: payment-worker
+    spec:
+      containers:
+      - name: payment-worker
+        image: payment-worker:latest
+        imagePullPolicy: Never
+        env:
+         - name: SPRING_PROFILES_ACTIVE
+           value: docker
+        ports:
+          - name: http
+            containerPort: 8885 # The port that the container exposes
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "500Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  
+  labels:
+    app: payment-worker
+  name: payment-worker
+  
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8885
+  selector:
+    app: payment-worker
+  type: ClusterIP

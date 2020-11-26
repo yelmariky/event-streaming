@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  
+  labels:
+    app: payment-web
+  name: payment-web
+ 
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: payment-web
+  
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+      labels:
+        app: payment-web
+    spec:
+      containers:
+      - name: payment-web
+        image: payment-web:latest
+        imagePullPolicy: Never
+        ports:
+          - name: http
+            containerPort: 8886 # The port that the container exposes
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "500Mi"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: docker
+---
+apiVersion: v1
+kind: Service
+metadata:
+  
+  labels:
+    app: payment-web
+  name: payment-web
+  
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8886
+  selector:
+    app: payment-web
+  type: ClusterIP

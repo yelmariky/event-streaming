@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+
+  labels:
+    run: tracing-zipkin-collect
+  name: tracing-zipkin-collect
+
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      run: tracing-zipkin-collect
+
+  template:
+    metadata:
+
+      labels:
+        run: tracing-zipkin-collect
+    spec:
+      containers:
+        - name: tracing-zipkin-collect
+          image: tracing-zipkin-collect:latest
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 9411 # The port that the container exposes
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "500Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+
+  labels:
+    run: tracing-zipkin-collect
+  name: tracing-zipkin-collect
+
+spec:
+  ports:
+    - port: 9411
+      protocol: TCP
+      targetPort: 9411
+  selector:
+    run: tracing-zipkin-collect
+  type: ClusterIP

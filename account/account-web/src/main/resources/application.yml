@@ -1,0 +1,156 @@
+server:
+  port: 9987
+
+spring:
+  profiles: docker
+  jpa:
+        hibernate:
+          ddl-auto: update
+  datasource:
+        driverClassName: org.h2.Driver
+        password: ''
+        url: jdbc:h2:mem:accountdb;DB_CLOSE_ON_EXIT=FALSE
+        username: sa
+
+  h2:
+        console:
+            enabled: true
+            path: /h2-console
+  sleuth:
+    trace-id128: true
+    sampler:
+      probability: 1.0
+    propagation-keys: user_name
+  zipkin:
+    base-url: http://my-zipkin-collector.default.svc.cluster.local:9411
+    enabled: true
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${IP_KAFKA:mykafka-v1.default.svc.cluster.local:9092}
+      bindings:
+        output:
+          contentType: 'application/json'
+          destination: account
+logging:
+  folder: logs
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${IP_EUREKA:eureka-0.eureka}:8761/eureka
+    registryFetchIntervalSeconds: 5
+  instance:
+    hostname: ${IP_EUREKA:eureka-0.eureka}
+    instance-id: ${spring.application.name}:${random.int}
+    leaseRenewalIntervalInSeconds: 5
+#spring:
+#  profiles:
+#    active: development
+#server:
+#  port: 8085
+#events:
+#  worker: http://account-worker/v1/events
+#---
+#spring:
+#  profiles: development
+#  cloud:
+#    stream:
+#      bindings:
+#        output:
+#          destination: account
+#          contentType: 'application/json'
+#  jpa:
+#    show_sql: false
+#    database: H2
+#  datasource:
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+#    initialize: false
+#---
+#spring:
+#  profiles: docker
+#  jpa:
+#    show_sql: false
+#    database: H2
+#  datasource:
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+#    initialize: false
+##  kafka:
+##    bootstrap-servers:
+##      - localhost:19092
+#server:
+#  port: 8085
+#  cloud:
+#    stream:
+#      kafka:
+#        binder:
+#          brokers: 
+#          - localhost:9093
+#          - localhost:9091
+#          - localhost:9095
+#      bindings:
+#        output:
+#          destination: account
+#          contentType: 'application/json'
+#   
+##  datasource:
+##    url: jdbc:mysql://streaming-mysql:3306/dev
+##    username: root
+##    password: dbpass
+##    initialize: true
+##    driver-class-name: com.mysql.jdbc.Driver
+##  jpa:
+##    hibernate:
+##      ddl-auto: update
+##      database-platform: org.hibernate.dialect.MySQLDialect
+#
+#
+##eureka:
+##  client:
+##    service-url:
+##      defaultZone: http://${DOCKER_IP:192.168.99.100}:8761/eureka
+##    registryFetchIntervalSeconds: 5
+##  instance:
+##    hostname: ${DOCKER_IP:192.168.99.100}
+##    instance-id: ${spring.application.name}:${random.int}
+##    leaseRenewalIntervalInSeconds: 5
+#---
+#spring:
+#  profiles: test
+#  jpa:
+#    show_sql: false
+#    database: H2
+#  datasource:
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+#    initialize: false
+##eureka:
+##  client:
+##    enabled: false
+#logging:
+#  level:
+#    org:
+#      apache:
+#        zookeeper:
+#          ZooKeeper: error
+#    org.apache.kafka.clients.producer.ProducerConfig: error
+#---
+#spring:
+#  profiles: cloud
+#  cloud:
+#    stream:
+#      bindings:
+#        output:
+#          destination: account
+#          contentType: 'application/json'
+##eureka:
+##  instance:
+##    hostname: ${vcap.application.uris[0]:localhost}
+##    nonSecurePort: 80
+##    metadataMap:
+##      instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
+##    leaseRenewalIntervalInSeconds: 5
+##  client:
+##    region: default
+##    registryFetchIntervalSeconds: 5
+##    serviceUrl:
+##      defaultZone: ${vcap.services.discovery-service.credentials.uri:http://localhost:8761}/eureka/

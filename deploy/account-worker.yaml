@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  
+  labels:
+    app: account-worker
+  name: account-worker
+ 
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: account-worker
+  
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+      labels:
+        app: account-worker
+    spec:
+      containers:
+      - name: account-worker
+        image: account-worker:latest
+        imagePullPolicy: Never
+        env:
+         - name: SPRING_PROFILES_ACTIVE
+           value: docker
+        ports:
+          - name: http
+            containerPort: 9988 # The port that the container exposes
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "500Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  
+  labels:
+    app: account-worker
+  name: account-worker
+  
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 9988
+  selector:
+    app: account-worker
+  type: ClusterIP

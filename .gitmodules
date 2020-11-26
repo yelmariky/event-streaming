@@ -1,0 +1,21 @@
+[submodule "account/functions/account-created-function"]
+	path = account/functions/account-created-function
+	url = https://github.com/event-stream-processing-microservices/account-created-function.git
+[submodule "account/functions/account-confirmed-function"]
+	path = account/functions/account-confirmed-function
+	url = https://github.com/event-stream-processing-microservices/account-confirmed-function.git
+[submodule "account/functions/account-suspended-function"]
+	path = account/functions/account-suspended-function
+	url = https://github.com/event-stream-processing-microservices/account-suspended-function.git
+[submodule "account/functions/account-activated-function"]
+	path = account/functions/account-activated-function
+	url = https://github.com/event-stream-processing-microservices/account-activated-function.git
+[submodule "account/functions/account-archived-function"]
+	path = account/functions/account-archived-function
+	url = https://github.com/event-stream-processing-microservices/account-archived-function.git
+[submodule "account/functions/account-unsuspended-function"]
+	path = account/functions/account-unsuspended-function
+	url = https://github.com/event-stream-processing-microservices/account-unsuspended-function.git
+[submodule "account/functions/account-unarchived-function"]
+	path = account/functions/account-unarchived-function
+	url = https://github.com/event-stream-processing-microservices/account-unarchived-function.git

@@ -1,0 +1,139 @@
+server:
+  port: 9988
+---
+spring:
+  profiles: docker
+  sleuth:
+    trace-id128: true
+    sampler:
+      probability: 1.0
+    propagation-keys: user_name
+  zipkin:
+    base-url: http://my-zipkin-collector.default.svc.cluster.local:9411
+    enabled: true
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${IP_KAFKA:mykafka-v1.default.svc.cluster.local:9092}
+      bindings:
+        input:
+          contentType: 'application/json'
+          destination: account
+          group: account-group
+          consumer:
+            durableSubscription: true
+          concurrency: 20
+logging:
+  folder: logs
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${IP_EUREKA:eureka-0.eureka}:8761/eureka
+    registryFetchIntervalSeconds: 5
+  instance:
+    hostname: ${IP_EUREKA:eureka-0.eureka}
+    instance-id: ${spring.application.name}:${random.int}
+    leaseRenewalIntervalInSeconds: 5
+#
+#
+#spring:
+#  profiles:
+#    active: development
+#
+##amazon:
+##  aws:
+##    access-key-id: replace
+##    access-key-secret: replace
+#---
+#spring:
+#  profiles: development
+#  cloud:
+#    stream:
+#      bindings:
+#        input:
+#          destination: account
+#          group: account-group
+#          contentType: 'application/json'
+#          consumer:
+#            durableSubscription: true
+#---
+#spring:
+#  profiles: test
+##eureka:
+##  client:
+##    enabled: false
+#logging:
+#  level:
+#    org:
+#      apache:
+#        zookeeper:
+#          ZooKeeper: error
+#    org.apache.kafka.clients.producer.ProducerConfig: error
+#---
+#spring:
+#  profiles: docker
+##  kafka:
+##    bootstrap-servers:
+##      - localhost:19092
+#  jpa:
+#    show_sql: false
+#    database: H2
+#  datasource:
+#    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+#    initialize: false
+#server:
+#  port: 8888
+#  cloud:
+#    stream:
+#      kafka:
+#        binder:
+#          brokers: 
+#          - localhost:9093
+#          - localhost:9091
+#          - localhost:9095
+#      bindings:
+#        input:
+#          destination: account
+#          group: account-group
+#          contentType: 'application/json'
+#          consumer:
+#            durableSubscription: true
+#            concurrency: 20
+##eureka:
+##  client:
+##    service-url:
+##      defaultZone: http://${DOCKER_IP:192.168.99.100}:8761/eureka
+##    registryFetchIntervalSeconds: 5
+##  instance:
+##    hostname: ${DOCKER_IP:192.168.99.100}
+##    instance-id: ${spring.application.name}:${random.int}
+##    leaseRenewalIntervalInSeconds: 5
+#---
+#spring:
+#  profiles: cloud
+#  cloud:
+#    stream:
+#      bindings:
+#        input:
+#          destination: account
+#          group: account-group
+#          contentType: 'application/json'
+#          consumer:
+#            durableSubscription: true
+##amazon:
+##  aws:
+##    access-key-id: ${AMAZON_AWS_ACCESS_KEY_ID:replace}
+##    access-key-secret: ${AMAZON_AWS_ACCESS_KEY_SECRET:replace}
+##eureka:
+##  instance:
+##    hostname: ${vcap.application.uris[0]:localhost}
+##    nonSecurePort: 80
+##    metadataMap:
+##      instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
+##    leaseRenewalIntervalInSeconds: 5
+##  client:
+##    region: default
+##    registryFetchIntervalSeconds: 5
+##    serviceUrl:
+##      defaultZone: ${vcap.services.discovery-service.credentials.uri:http://localhost:8761}/eureka/

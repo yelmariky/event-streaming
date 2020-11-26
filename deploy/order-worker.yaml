@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  
+  labels:
+    app: order-worker
+  name: order-worker
+ 
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: order-worker
+  
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+      labels:
+        app: order-worker
+    spec:
+      containers:
+      - name: order-worker
+        image: order-worker:latest
+        imagePullPolicy: Never
+        env:
+         - name: SPRING_PROFILES_ACTIVE
+           value: docker
+        ports:
+          - name: http
+            containerPort: 8887 # The port that the container exposes
+        resources:
+          limits:
+            cpu: "0.2"
+            memory: "500Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  
+  labels:
+    app: order-worker
+  name: order-worker
+  
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8887
+  selector:
+    app: order-worker
+  type: ClusterIP

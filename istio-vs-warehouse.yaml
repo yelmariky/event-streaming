@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: warehouse-vs
+spec:
+  hosts:
+    - "warehouse.dev"
+  gateways:
+    - gateway
+  http:
+  - route:
+    - destination:
+        host: warehouse-web # interpreted as warehouse-web.default.svc.cluster.local
+        port:
+          number: 80
+

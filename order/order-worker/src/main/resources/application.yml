@@ -1,0 +1,87 @@
+spring:
+  profiles:
+    active: development
+server:
+  port: 8887
+---
+spring:
+  profiles: development
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers:
+          - mykafka-v1.default.svc.cluster.local:9092
+      bindings:
+        input:
+         #binder: kafka
+         destination: order
+         content-type: application/json
+         group: order-group
+---
+spring:
+  profiles: docker
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${IP_KAFKA:mykafka-v1.default.svc.cluster.local:9092}
+          configuration:
+            auto-offset-reset: earliest
+      bindings:
+        input:
+          contentType: 'application/json'
+          destination: order
+          group: order-group
+          consumer:
+            concurrency: 20
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${IP_EUREKA:eureka-0.eureka}:8761/eureka
+    registryFetchIntervalSeconds: 5
+  instance:
+    hostname: ${IP_EUREKA:eureka-0.eureka}
+    instance-id: ${spring.application.name}:${random.int}
+    leaseRenewalIntervalInSeconds: 5
+---
+spring:
+  profiles: test
+eureka:
+  client:
+    enabled: false
+logging:
+  level:
+    org:
+      apache:
+        zookeeper:
+          ZooKeeper: error
+    org.apache.kafka.clients.producer.ProducerConfig: error
+---
+spring:
+  profiles: cloud
+  cloud:
+    stream:
+      bindings:
+        input:
+          contentType: 'application/json'
+          destination: order
+          group: order-group
+          consumer:
+            durableSubscription: true
+amazon:
+  aws:
+    access-key-id: ${AMAZON_AWS_ACCESS_KEY_ID:replace}
+    access-key-secret: ${AMAZON_AWS_ACCESS_KEY_SECRET:replace}
+eureka:
+  instance:
+    hostname: ${vcap.application.uris[0]:localhost}
+    nonSecurePort: 80
+    metadataMap:
+      instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}
+    leaseRenewalIntervalInSeconds: 5
+  client:
+    region: default
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: ${vcap.services.discovery-service.credentials.uri:http://localhost:8761}/eureka/

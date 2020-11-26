@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  
+  labels:
+    app: warehouse-web
+  name: warehouse-web
+ 
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: warehouse-web
+  
+  template:
+    metadata:
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+      labels:
+        app: warehouse-web
+    spec:
+      containers:
+      - name: warehouse-web
+        image: warehouse-web:latest
+        imagePullPolicy: Never
+        ports:
+          - name: http
+            containerPort: 8866 # The port that the container exposes
+        resources:
+          limits:
+            cpu: "0.3"
+            memory: "500Mi"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: docker
+        - name: REDIS_IP
+          value: redis-v1-master.default.svc.cluster.local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  
+  labels:
+    app: warehouse-web
+  name: warehouse-web
+  
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8866
+  selector:
+    app: warehouse-web
+  type: ClusterIP

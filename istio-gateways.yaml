@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+
+
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: account-dev
+      protocol: HTTP
+    hosts:
+    - "account.dev"
+  - port:
+      number: 80
+      name: payment-dev
+      protocol: HTTP
+    hosts:
+    - "payment.dev"
+  - port:
+      number: 80
+      name: warehouse-dev
+      protocol: HTTP
+    hosts:
+    - "warehouse.dev"
+  - port:
+      number: 80
+      name: order-dev
+      protocol: HTTP
+    hosts:
+    - "order.dev"
+    

@@ -1,0 +1,18 @@
+server:
+  port: 9411
+spring:
+    application:
+      name: tracing-zipkin-collect
+    cloud:
+        kubernetes:
+            reload:
+                enabled: true
+
+management:
+  endpoint:
+    health:
+        enabled: true
+    info:
+        enabled: true
+    restart:
+        enabled: true
