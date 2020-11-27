@@ -80,6 +80,33 @@ eureka:
 ---
 spring:
   profiles: test
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${IP_KAFKA:mykafka-v1.default.svc.cluster.local:9092}
+      bindings:
+        warehouse:
+          contentType: 'application/json'
+          destination: warehouse
+          group: warehouse-group
+          consumer:
+            durableSubscription: true
+            concurrency: 20
+        reservation:
+          contentType: 'application/json'
+          destination: reservation
+          group: reservation-group
+          consumer:
+            durableSubscription: true
+            concurrency: 20
+        inventory:
+          contentType: 'application/json'
+          destination: inventory
+          group: inventory-group
+          consumer:
+            durableSubscription: true
+            concurrency: 20
 eureka:
   client:
     enabled: false

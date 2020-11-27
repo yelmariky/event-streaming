@@ -69,6 +69,15 @@ eureka:
 ---
 spring:
   profiles: test
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${IP_KAFKA:mykafka-v1.default.svc.cluster.local:9092}
+      bindings:
+        output:
+          destination: order
+          contentType: 'application/json'
   jpa:
     show_sql: false
     database: H2

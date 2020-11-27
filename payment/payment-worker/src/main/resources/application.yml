@@ -58,6 +58,19 @@ eureka:
 ---
 spring:
   profiles: test
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${IP_KAFKA:mykafka-v1.default.svc.cluster.local:9092}
+      bindings:
+        input:
+          contentType: 'application/json'
+          destination: payment
+          group: payment-group
+          consumer:
+            durableSubscription: true
+          concurrency: 20
 eureka:
   client:
     enabled: false
