@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>event-stream-processing-parent</name>
+    <name>event-stream</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
