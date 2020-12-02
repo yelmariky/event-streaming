@@ -31,5 +31,10 @@ pipeline {
             }
          }
       }
+       stage('SonarQube analysis') {
+          withSonarQubeEnv(credentialsId: '658e0bee857f7a362be4b86dd0edf44674835659', installationName: 'http://localhost:32001') { // You can override the credential to be used
+            sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+          }
+        }
    }
 }
