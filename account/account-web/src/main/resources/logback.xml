@@ -34,7 +34,7 @@
             <charset>utf8</charset>
         </encoder>
     </appender>
-    <!-- Appender to log to file in a JSON format -->
+    <!--
     <appender name="logstash" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE}.json</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -66,14 +66,13 @@
         </encoder>
     </appender>
 
-    <!--PAY ATTENTION!!!! this is the appender that is not documented in the official Spring documentation that will send your logs to logstash-->
-    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+     <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>my-release-logstash.default.svc.cluster.local:8080</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
-
+-->
     <root level="INFO">
-        <appender-ref ref="stash"/>
+       <!-- <appender-ref ref="stash"/> -->
         <appender-ref ref="console"/>
         <!--uncomment this to have also JSON logs -->
         <appender-ref ref="flatfile"/>

@@ -126,13 +126,14 @@ spring:
   cloud:
     stream:
       kafka:
-        b
         binder:
           brokers: ${IP_KAFKA:mykafka-v1.default.svc.cluster.local:9092}
       bindings:
         output:
           contentType: 'application/json'
           destination: account
+logging:
+  folder: logs
 ##eureka:
 ##  client:
 ##    enabled: false

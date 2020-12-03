@@ -1,5 +1,7 @@
 server:
   port: 9988
+logging:
+  folder: logs
 ---
 spring:
   profiles: docker
